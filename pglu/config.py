@@ -22,6 +22,12 @@ class Config:
     tts_rate: int = 175
     voice_enabled: bool = False
     default_city: str = ""
+    # "Jarvis mode" wake triggers (work while the window is minimized / screen off, PC awake)
+    wake_hotkey_enabled: bool = False
+    wake_hotkey: str = "<ctrl>+<alt>+p"
+    wake_clap_enabled: bool = False
+    clap_threshold: float = 0.45
+    wake_word_enabled: bool = False
 
     @classmethod
     def load(cls) -> "Config":

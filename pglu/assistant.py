@@ -59,15 +59,20 @@ class Assistant:
         rows = [("Pglu version", __version__), ("Python", platform.python_version()),
                 ("Platform", f"{platform.system()} {platform.release()}")]
 
-        def probe(mod):
+        def _okmod(mod):
             try:
-                __import__(mod); return "✓ installed"
+                __import__(mod); return True
             except Exception:
-                return "✗ missing (optional)"
+                return False
+
+        def probe(mod):
+            return "✓ installed" if _okmod(mod) else "✗ missing (optional)"
         rows += [("psutil (system info)", probe("psutil")),
-                 ("SpeechRecognition (voice in)", probe("speech_recognition")),
                  ("pyttsx3 (voice out)", probe("pyttsx3")),
-                 ("PyAudio (microphone)", probe("pyaudio"))]
+                 ("SpeechRecognition (voice in)", probe("speech_recognition")),
+                 ("PyAudio (microphone)", probe("pyaudio")),
+                 ("pynput (hotkey wake)", probe("pynput")),
+                 ("sounddevice+numpy (clap wake)", "✓ installed" if (_okmod("sounddevice") and _okmod("numpy")) else "✗ missing (optional)")]
         # network probe
         try:
             from .util import get_json

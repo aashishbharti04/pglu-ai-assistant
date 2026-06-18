@@ -21,10 +21,19 @@ classifiers = [
 ]
 dependencies = []  # core features run on the standard library alone
 
-[project.optional-dependencies]
-voice = ["SpeechRecognition>=3.10", "pyttsx3>=2.90", "PyAudio>=0.2.13"]
+# Speech output (pyttsx3) + the recognition library — install cleanly (no compiler).
+voice = ["SpeechRecognition>=3.10", "pyttsx3>=2.90"]
+# Microphone input (voice commands / wake-word). PyAudio sometimes needs build tools — see README.
+mic = ["PyAudio>=0.2.13"]
+# System info (battery / CPU / RAM).
 system = ["psutil>=5.9"]
-full = ["SpeechRecognition>=3.10", "pyttsx3>=2.90", "PyAudio>=0.2.13", "psutil>=5.9"]
+# "Jarvis mode" wake triggers (wheels, no compiler):
+wake = ["pynput>=1.7"]                          # global hotkey
+clap = ["sounddevice>=0.4.6", "numpy>=1.24"]   # double-clap detection
+# Installs cleanly on every platform (no C compiler): voice + system + hotkey wake.
+full = ["SpeechRecognition>=3.10", "pyttsx3>=2.90", "psutil>=5.9", "pynput>=1.7"]
+# Absolutely everything (mic + clap may need extra setup on some systems).
+everything = ["SpeechRecognition>=3.10", "pyttsx3>=2.90", "PyAudio>=0.2.13", "psutil>=5.9", "pynput>=1.7", "sounddevice>=0.4.6", "numpy>=1.24"]
 dev = ["pytest", "ruff", "pillow"]
 
 [project.scripts]

@@ -83,8 +83,28 @@ python main.py "what is 25 times 4"      # run without installing
 pip install -e ".[full]"                 # editable install + all extras
 ```
 
-> Add extras any time: `pip install "pglu-ai-assistant[voice]"` (mic/speech) or `[system]`
-> (battery/CPU/RAM). On Linux, voice needs `sudo apt install portaudio19-dev` before PyAudio.
+**Optional extras** (mix and match):
+
+| Extra | Adds | Notes |
+|-------|------|-------|
+| `voice` | speak replies (pyttsx3) + recognition lib | installs cleanly anywhere |
+| `system` | battery / CPU / RAM info (psutil) | installs cleanly |
+| `wake` | global-hotkey wake (pynput) | installs cleanly |
+| `clap` | double-clap wake (sounddevice+numpy) | wheels; needs a mic |
+| `mic` | microphone input (PyAudio) | **may need a C++ compiler** — see below |
+| `full` | voice + system + wake | **clean on every OS, no compiler** ✅ |
+| `everything` | all of the above | only if you can build PyAudio |
+
+```bash
+pip install "pglu-ai-assistant[full]"        # recommended — installs everywhere
+pip install "pglu-ai-assistant[mic]"         # add microphone input (see troubleshooting)
+```
+
+> **PyAudio on Windows / Python 3.14:** if `[mic]`/`[everything]` fails with *"Microsoft Visual
+> C++ 14.0 is required"*, it's because PyAudio has no prebuilt wheel for that Python yet. Fixes:
+> use **Python 3.12** (`pip install pyaudio` then has a wheel), or `pip install pipwin && pipwin
+> install pyaudio`, or install the **C++ Build Tools**. The mic is **optional** — everything else
+> (incl. hotkey & clap wake, and Pglu *speaking*) works without it.
 
 ## 🖥️ Desktop app — clone & click an icon
 
@@ -105,6 +125,23 @@ with `pythonw`, so there's **no black console window**.
 Prefer to open the window directly? `python -m pglu gui` (or `pglu gui`, or the `pglu-gui` command).
 
 <div align="center"><img src="docs/screenshot-gui.svg" alt="Pglu desktop window — chat-style assistant" width="420"></div>
+
+## ⚡ Jarvis mode — hands-free wake (while minimized)
+
+Open the GUI, click **⚙ Settings**, and turn on any of these triggers so Pglu wakes even when the
+window is minimized (PC awake — not asleep/locked). When triggered, the window pops to the front
+and starts listening (or focuses the box to type):
+
+| Trigger | How to fire it | Needs |
+|--------|----------------|-------|
+| ⌨ **Global hotkey** | press your combo (default `Ctrl+Alt+P`) anywhere | `pip install "pglu-ai-assistant[wake]"` |
+| 👏 **Double-clap** | clap twice | `pip install "pglu-ai-assistant[clap]"` + a mic |
+| 🗣 **Wake word** | say your word (default “pglu”) | `[voice]` + `[mic]` |
+
+Each option is greyed out in Settings until its package is installed, with the exact command shown.
+Pick the hotkey for the most reliable, lowest-overhead "Iron-Man" wake; add clap/wake-word for
+fully hands-free. (True wake-from-sleep/locked-screen needs OS-level scheduling and is out of scope
+for a user app.)
 
 ## 🕹️ Usage (command line)
 
