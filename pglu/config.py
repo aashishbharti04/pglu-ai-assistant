@@ -28,6 +28,13 @@ class Config:
     wake_clap_enabled: bool = False
     clap_threshold: float = 0.45
     wake_word_enabled: bool = False
+    # AI brain + personality
+    user_about: str = ""
+    persona: str = "jarvis"
+    custom_persona: str = ""
+    ai_provider: str = "auto"   # auto | ollama | openai | anthropic | gemini | groq | openrouter | none
+    ai_model: str = ""
+    ai_api_key: str = ""
 
     @classmethod
     def load(cls) -> "Config":

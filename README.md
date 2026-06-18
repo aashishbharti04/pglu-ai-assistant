@@ -40,6 +40,8 @@ everything else runs locally.
 
 ## ✨ Features
 
+- 🧠 **Real conversational AI** — talk naturally (not canned replies), powered by a **local LLM (Ollama, free, private)** or **your own API key** (Claude / GPT / Gemini / Groq). Choose a **personality** and set the AI's name + who you are
+- 🎭 **Personalities** — Jarvis, Friendly, Professional, Funny, Savage, Loving, Motivational, Zen — or write your own custom style
 - 🧩 **Plugin skill architecture** — 6 skills, ~28 intents; add your own in a few lines
 - 🗣️ **Voice *and* text** — speak (SpeechRecognition) and hear replies (pyttsx3), or just type
 - 🖥️ **Real PC control** — launch apps (Notepad, Calculator, Settings, Task Manager, VS Code…), open sites
@@ -52,6 +54,36 @@ everything else runs locally.
 - 🩺 **`pglu doctor`** — environment & dependency health check
 - 🔒 **Privacy-first & local** — no cloud brain, no API keys; key-less public APIs only
 - 🪶 **Zero core dependencies** — extras (`voice`, `system`) are opt-in
+
+## 🧠 Talk to it like Jarvis — AI brain & personality
+
+Out of the box Pglu uses fast rule-based skills. Give it an **AI brain** and it *converses* — in
+the **personality and identity you choose**.
+
+**Set it up** (CLI wizard or the GUI ⚙ Settings):
+
+```bash
+pglu setup     # asks: AI's name, your name, who you are, personality, AI provider
+```
+
+**Two ways to power the brain:**
+
+| Option | How | Cost / privacy |
+|--------|-----|----------------|
+| 🖥️ **Local (recommended)** | install **[Ollama](https://ollama.com)** → `ollama pull llama3.2` | **free, 100% private, offline** — nothing leaves your PC |
+| ☁️ **Your API key** | choose `openai` / `anthropic` / `gemini` / `groq` and paste a key | uses that provider; key stored locally in `~/.pglu/config.json` |
+
+**Personalities:** `jarvis` (default), `friendly`, `professional`, `funny`, `savage`, `loving`,
+`motivational`, `zen` — **or type your own** custom style (e.g. *"a chill gen-Z bestie who roasts
+me lovingly"*). You also set the **AI's name** and **who you are**, so it addresses you personally.
+
+```text
+You: hey, how are you?
+Pglu: All systems nominal and delighted to see you, sir. How may I be of service today?
+```
+
+> 💡 Real **actions stay reliable** — “open notepad”, “battery”, “set a timer” are executed by the
+> app (the AI can't fake those). The AI handles conversation, advice, opinions, and questions.
 
 ## 🚀 Installation
 
@@ -147,6 +179,7 @@ for a user app.)
 
 ```bash
 pglu                       # interactive text mode
+pglu setup                 # set AI name, persona & brain provider
 pglu gui                   # open the desktop window
 pglu install-shortcut      # add a clickable Desktop icon
 pglu --voice               # interactive voice mode (needs [voice] extra)

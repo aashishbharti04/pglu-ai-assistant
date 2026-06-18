@@ -39,18 +39,26 @@ class Fun(Skill):
                 "generate a password 16"]
 
     def greet(self, text, m):
+        if self.ctx.brain_available:
+            return None  # let the AI brain reply in character
         return random.choice([f"Hello {self.ctx.config.user_name}! How can I help?",
                               "Hi there — what can I do for you?",
                               f"{self.ctx.config.name} at your service."])
 
     def thanks(self, text, m):
+        if self.ctx.brain_available:
+            return None
         return random.choice(["You're welcome!", "Anytime!", "Happy to help."])
 
     def about(self, text, m):
+        if self.ctx.brain_available:
+            return None
         return (f"I'm {self.ctx.config.name} — your privacy-first desktop assistant. I can open apps, "
                 "search the web, answer questions, check your system, set timers, and more. Say 'help'.")
 
     def joke(self, text, m):
+        if self.ctx.brain_available:
+            return None  # the AI can tell jokes in its own style
         return random.choice(JOKES)
 
     def coin(self, text, m):

@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pglu.util import safe_math  # noqa: E402
 from pglu.config import Config  # noqa: E402
 from pglu.assistant import Assistant  # noqa: E402
+from pglu.persona import build_system_prompt  # noqa: E402
 
 
 def make():
@@ -64,3 +65,33 @@ def test_skills_and_intents_loaded():
 
 def test_doctor_runs():
     assert "Pglu doctor" in make().doctor()
+
+
+def test_persona_prompt():
+    cfg = Config()
+    cfg.name = "Friday"; cfg.user_name = "Tony"; cfg.persona = "loving"
+    p = build_system_prompt(cfg)
+    assert "Friday" in p and "Tony" in p
+
+
+class _FakeBrain:
+    def available(self):
+        return True
+
+    def effective_provider(self):
+        return "fake"
+
+    def reply(self, system, messages):
+        return "FAKE:" + messages[-1]["content"]
+
+
+def test_brain_handles_chat_but_tools_stay_local():
+    a = Assistant(Config(), brain=_FakeBrain())
+    assert "100" in a.respond("what is 25 times 4")          # math = local tool, not the brain
+    assert a.respond("i love you").startswith("FAKE:")        # open chat -> brain
+    assert a.respond("hello").startswith("FAKE:")             # greeting defers to brain
+
+
+def test_offline_greeting_without_brain():
+    r = make().respond("hello")  # no brain
+    assert r and "FAKE" not in r

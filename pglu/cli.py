@@ -44,6 +44,11 @@ def main(argv=None):
 
     one = args.command[0].lower() if args.command else ""
 
+    # first-run / identity + persona + AI provider wizard
+    if one == "setup" and len(args.command) == 1:
+        _setup(cfg)
+        return
+
     # GUI window (desktop app)
     if one == "gui" and len(args.command) == 1:
         from .gui import run_gui
@@ -62,7 +67,8 @@ def main(argv=None):
                   "You can still launch the app with:  pglu gui")
         return
 
-    assistant = Assistant(cfg, voice=voice)
+    from .ai import Brain
+    assistant = Assistant(cfg, voice=voice, brain=Brain(cfg))
 
     if one == "doctor" and len(args.command) == 1:
         print(assistant.doctor())
@@ -79,6 +85,50 @@ def main(argv=None):
         return
 
     _interactive(assistant, voice, cfg)
+
+
+def _setup(cfg):
+    from .persona import persona_list
+    from .ai import Brain
+
+    print("⚙  Pglu setup — press Enter to keep the current value.\n")
+
+    def ask(label, cur):
+        v = input(f"  {label} [{cur}]: ").strip()
+        return v or cur
+
+    cfg.name = ask("AI assistant's name", cfg.name)
+    cfg.user_name = ask("Your name", cfg.user_name)
+    cfg.user_about = ask("One line about you (role, interests)", cfg.user_about)
+
+    print("\n  Personality styles:")
+    pl = persona_list()
+    for i, (pid, nm) in enumerate(pl, 1):
+        print(f"    {i}. {nm}  ({pid})")
+    sel = input(f"  Pick a number/id, or type your own custom style [{cfg.persona}]: ").strip()
+    if sel:
+        ids = [pid for pid, _ in pl]
+        if sel.isdigit() and 1 <= int(sel) <= len(pl):
+            cfg.persona, cfg.custom_persona = pl[int(sel) - 1][0], ""
+        elif sel in ids:
+            cfg.persona, cfg.custom_persona = sel, ""
+        else:
+            cfg.custom_persona = sel
+
+    print("\n  AI brain provider:  ollama (local, free) | openai | anthropic | gemini | groq | openrouter | none")
+    cfg.ai_provider = ask("Provider", cfg.ai_provider or "auto")
+    if cfg.ai_provider not in ("ollama", "none", "auto", ""):
+        cfg.ai_api_key = ask("API key (stored locally in ~/.pglu/config.json)", cfg.ai_api_key)
+    cfg.ai_model = ask("Model (blank = sensible default)", cfg.ai_model)
+
+    cfg.save()
+    print("\n✓ Saved to ~/.pglu/config.json")
+    b = Brain(cfg)
+    if b.available():
+        print(f"🧠 AI brain ready via {b.effective_provider()}. Run `pglu` or `pglu gui` and just talk!")
+    else:
+        print("⚠️  AI brain not reachable yet. For local AI: install Ollama (ollama.com) and run "
+              "`ollama pull llama3.2`. Or choose an API provider + key. Pglu still works in command mode.")
 
 
 def _interactive(assistant, voice, cfg):

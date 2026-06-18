@@ -17,4 +17,13 @@ You'll get an acknowledgement within a few days.
   does not delete files or run arbitrary shell input from the user verbatim.
 - **Config & notes** are stored locally under `~/.pglu/`. No secrets are committed to the repo.
 
+### AI brain & privacy
+- The AI brain is **opt-in**. The default/recommended backend is **local Ollama** — fully offline,
+  no key, nothing leaves your machine.
+- If you choose a cloud provider (OpenAI/Anthropic/Gemini/Groq), your **API key is stored locally
+  in `~/.pglu/config.json` (plaintext)** and your chat messages are sent to that provider. Use a
+  key with minimal scope, and prefer Ollama for full privacy.
+- Real actions (opening apps, system info, timers) are executed by the local tool layer, never by
+  the model — the model only converses.
+
 > Be mindful when extending Pglu with shell-executing skills — never pass raw user text to a shell.

@@ -36,7 +36,9 @@ def run_gui():
     except Exception:
         voice = None
 
-    assistant = Assistant(cfg, voice=voice)
+    from .ai import Brain
+    from .persona import persona_list
+    assistant = Assistant(cfg, voice=voice, brain=Brain(cfg))
 
     root = tk.Tk()
     root.title(f"{cfg.name} AI Assistant")
@@ -167,7 +169,7 @@ def run_gui():
     def open_settings():
         win = tk.Toplevel(root, bg=BG)
         win.title("Settings")
-        win.geometry("420x520")
+        win.geometry("460x760")
         win.configure(bg=BG)
         try:
             win.iconbitmap(ICON)
@@ -189,6 +191,37 @@ def run_gui():
                 c.config(state="disabled", fg=MUTED)
             c.pack(anchor="w", padx=18, pady=2, fill="x")
             return c
+
+        def field_row(label, value, mask=False):
+            r = tk.Frame(win, bg=BG)
+            r.pack(fill="x", padx=18, pady=2)
+            tk.Label(r, text=label, bg=BG, fg=MUTED, font=("Segoe UI", 9), width=11, anchor="w").pack(side="left")
+            e = tk.Entry(r, bg=PANEL, fg=TEXT, bd=0, insertbackground=USER, font=("Segoe UI", 10),
+                         highlightthickness=1, highlightbackground=BORDER)
+            if mask:
+                e.config(show="•")
+            e.insert(0, value or "")
+            e.pack(side="left", fill="x", expand=True, ipady=3)
+            return e
+
+        hdr("🧠 AI brain & persona")
+        ai_name = field_row("AI name", cfg.name)
+        your_name = field_row("Your name", cfg.user_name)
+        about = field_row("About you", cfg.user_about)
+        prow = tk.Frame(win, bg=BG); prow.pack(fill="x", padx=18, pady=2)
+        tk.Label(prow, text="Personality", bg=BG, fg=MUTED, font=("Segoe UI", 9), width=11, anchor="w").pack(side="left")
+        persona_var = tk.StringVar(value=cfg.persona)
+        om = tk.OptionMenu(prow, persona_var, *[pid for pid, _ in persona_list()])
+        om.config(bg=PANEL, fg=TEXT, bd=0, highlightthickness=1, highlightbackground=BORDER,
+                  activebackground=BORDER, font=("Segoe UI", 9))
+        om["menu"].config(bg=PANEL, fg=TEXT)
+        om.pack(side="left", fill="x", expand=True)
+        custom = field_row("Custom style", cfg.custom_persona)
+        provider = field_row("Provider", cfg.ai_provider)
+        model = field_row("Model", cfg.ai_model)
+        apikey = field_row("API key", cfg.ai_api_key, mask=True)
+        hint("Provider: ollama (local, free) · openai · anthropic · gemini · groq · none. "
+             "Local AI: install Ollama + `ollama pull llama3.2`. Keys are stored locally.")
 
         hdr("Voice")
         spk = tk.BooleanVar(value=speak_var.get())
@@ -231,10 +264,19 @@ def run_gui():
 
         def save():
             speak_var.set(spk.get())
+            cfg.name = ai_name.get().strip() or cfg.name
+            cfg.user_name = your_name.get().strip()
+            cfg.user_about = about.get().strip()
+            cfg.persona = persona_var.get()
+            cfg.custom_persona = custom.get().strip()
+            cfg.ai_provider = provider.get().strip() or "auto"
+            cfg.ai_model = model.get().strip()
+            cfg.ai_api_key = apikey.get().strip()
             cfg.wake_hotkey_enabled = hk.get(); cfg.wake_hotkey = hk_entry.get().strip() or "<ctrl>+<alt>+p"
             cfg.wake_clap_enabled = cl.get(); cfg.clap_threshold = float(cl_scale.get())
             cfg.wake_word_enabled = wd.get(); cfg.wake_word = wd_entry.get().strip() or "pglu"
             cfg.save()
+            assistant.brain = Brain(cfg)   # pick up new provider / key / model
             restart_wake()
             status.set("⚡ Jarvis mode on" if wake["listener"] and wake["listener"].any_enabled() else "online · ask me anything")
             win.destroy()
