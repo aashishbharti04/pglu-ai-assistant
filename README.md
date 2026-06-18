@@ -55,20 +55,36 @@ everything else runs locally.
 
 ## 🚀 Installation
 
+Requires **Python 3.9+**. Pick whichever suits you:
+
+**① Easiest — install the `pglu` command directly (no clone needed):**
+
+```bash
+pipx install "git+https://github.com/aashishbharti04/pglu-ai-assistant"   # isolated (recommended)
+# or:
+pip install "git+https://github.com/aashishbharti04/pglu-ai-assistant"
+pglu "what is 25 times 4"      # now usable from anywhere
+```
+
+**② From PyPI** *(once published):*
+
+```bash
+pip install pglu-ai-assistant            # core
+pip install "pglu-ai-assistant[full]"    # + voice + system info
+pglu
+```
+
+**③ From source — for clone / fork / contributing:**
+
 ```bash
 git clone https://github.com/aashishbharti04/pglu-ai-assistant
 cd pglu-ai-assistant
-
-# core features need nothing extra — just run it:
-python main.py "what is 25 times 4"
-
-# install as a command + optional extras:
-pip install -e .                 # adds the `pglu` command (core only)
-pip install -e ".[full]"         # + voice (mic/speech) + system info
+python main.py "what is 25 times 4"      # run without installing
+pip install -e ".[full]"                 # editable install + all extras
 ```
 
-Requires **Python 3.9+**. Voice input also needs a microphone (and PyAudio); on Linux you may
-need `sudo apt install portaudio19-dev` before `pip install PyAudio`.
+> Add extras any time: `pip install "pglu-ai-assistant[voice]"` (mic/speech) or `[system]`
+> (battery/CPU/RAM). On Linux, voice needs `sudo apt install portaudio19-dev` before PyAudio.
 
 ## 🕹️ Usage
 
