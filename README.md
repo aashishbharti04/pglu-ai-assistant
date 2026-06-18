@@ -115,28 +115,24 @@ python main.py "what is 25 times 4"      # run without installing
 pip install -e ".[full]"                 # editable install + all extras
 ```
 
-**Optional extras** (mix and match):
+**Optional extras** — **all install from prebuilt wheels, no C compiler** (mic uses
+`sounddevice`, not PyAudio):
 
-| Extra | Adds | Notes |
-|-------|------|-------|
-| `voice` | speak replies (pyttsx3) + recognition lib | installs cleanly anywhere |
-| `system` | battery / CPU / RAM info (psutil) | installs cleanly |
-| `wake` | global-hotkey wake (pynput) | installs cleanly |
-| `clap` | double-clap wake (sounddevice+numpy) | wheels; needs a mic |
-| `mic` | microphone input (PyAudio) | **may need a C++ compiler** — see below |
-| `full` | voice + system + wake | **clean on every OS, no compiler** ✅ |
-| `everything` | all of the above | only if you can build PyAudio |
+| Extra | Adds |
+|-------|------|
+| `voice` | speak replies (pyttsx3) + recognition library |
+| `mic` | microphone input via `sounddevice` |
+| `system` | battery / CPU / RAM info (psutil) |
+| `wake` | global-hotkey wake (pynput) |
+| `clap` | double-clap wake (sounddevice + numpy) |
+| `full` / `everything` | **all of the above — the full hands-free experience** ✅ |
 
 ```bash
-pip install "pglu-ai-assistant[full]"        # recommended — installs everywhere
-pip install "pglu-ai-assistant[mic]"         # add microphone input (see troubleshooting)
+pip install -e ".[full]"     # ✅ recommended — installs cleanly on Windows/macOS/Linux, no compiler
 ```
 
-> **PyAudio on Windows / Python 3.14:** if `[mic]`/`[everything]` fails with *"Microsoft Visual
-> C++ 14.0 is required"*, it's because PyAudio has no prebuilt wheel for that Python yet. Fixes:
-> use **Python 3.12** (`pip install pyaudio` then has a wheel), or `pip install pipwin && pipwin
-> install pyaudio`, or install the **C++ Build Tools**. The mic is **optional** — everything else
-> (incl. hotkey & clap wake, and Pglu *speaking*) works without it.
+> Earlier versions pulled in **PyAudio**, which needs a C++ compiler / has no Python 3.14 wheel —
+> that's now **gone**. If a stale install still tries to build PyAudio, `git pull` first.
 
 ## 🖥️ Desktop app — clone & click an icon
 

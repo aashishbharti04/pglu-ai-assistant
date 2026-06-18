@@ -95,12 +95,12 @@ class Assistant:
 
         def probe(mod):
             return "✓ installed" if _okmod(mod) else "✗ missing (optional)"
+        sd = "✓ installed" if (_okmod("sounddevice") and _okmod("numpy")) else "✗ missing (optional)"
         rows += [("psutil (system info)", probe("psutil")),
                  ("pyttsx3 (voice out)", probe("pyttsx3")),
                  ("SpeechRecognition (voice in)", probe("speech_recognition")),
-                 ("PyAudio (microphone)", probe("pyaudio")),
-                 ("pynput (hotkey wake)", probe("pynput")),
-                 ("sounddevice+numpy (clap wake)", "✓ installed" if (_okmod("sounddevice") and _okmod("numpy")) else "✗ missing (optional)")]
+                 ("sounddevice+numpy (mic & clap)", sd),
+                 ("pynput (hotkey wake)", probe("pynput"))]
         # network probe
         try:
             from .util import get_json

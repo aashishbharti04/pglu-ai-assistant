@@ -30,7 +30,8 @@ def clap_available() -> bool:
 
 
 def word_available() -> bool:
-    return _has("speech_recognition") and _has("pyaudio")
+    from . import audio
+    return audio.stt_available()
 
 
 class WakeListener:
@@ -115,19 +116,13 @@ class WakeListener:
             pass
 
     def _word_loop(self):
-        try:
-            import speech_recognition as sr
-            r = sr.Recognizer()
-            mic = sr.Microphone()
-        except Exception:
-            return
+        from . import audio
         word = (self.cfg.wake_word or "pglu").lower()
         while not self._stop.is_set():
             try:
-                with mic as source:
-                    r.adjust_for_ambient_noise(source, duration=0.3)
-                    audio = r.listen(source, timeout=4, phrase_time_limit=3)
-                if word in r.recognize_google(audio).lower():
+                raw = audio.record_phrase(max_seconds=4, silence_seconds=0.6, start_timeout=4)
+                text = audio.recognize(raw) if raw else None
+                if text and word in text.lower():
                     self._fire("word")
             except Exception:
                 continue
