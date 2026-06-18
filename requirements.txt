@@ -1,0 +1,14 @@
+# Pglu AI Assistant — OPTIONAL dependencies.
+#
+# Core features (time, date, math, web search, open apps, Wikipedia, weather,
+# notes, timers, fun) work with the Python standard library ALONE — no installs.
+#
+# Install these only to unlock the extras:
+#   pip install -r requirements.txt          (everything)
+#   pip install "pglu-ai-assistant[voice]"   (just voice)
+#   pip install "pglu-ai-assistant[system]"  (just system info)
+
+SpeechRecognition>=3.10   # voice input (needs a microphone)
+pyttsx3>=2.90             # offline text-to-speech (voice output)
+PyAudio>=0.2.13           # microphone access for SpeechRecognition
+psutil>=5.9               # battery / CPU / RAM system info

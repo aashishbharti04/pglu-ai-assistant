@@ -1,0 +1,48 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pglu-ai-assistant"
+version = "1.0.0"
+description = "A privacy-first, plugin-based desktop voice/text assistant (Jarvis-style) in pure Python."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Aashish Bharti" }]
+keywords = ["assistant", "voice-assistant", "jarvis", "cli", "speech", "automation", "personal-assistant"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Utilities",
+]
+dependencies = []  # core features run on the standard library alone
+
+[project.optional-dependencies]
+voice = ["SpeechRecognition>=3.10", "pyttsx3>=2.90", "PyAudio>=0.2.13"]
+system = ["psutil>=5.9"]
+full = ["SpeechRecognition>=3.10", "pyttsx3>=2.90", "PyAudio>=0.2.13", "psutil>=5.9"]
+dev = ["pytest", "ruff"]
+
+[project.scripts]
+pglu = "pglu.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/aashishbharti04/pglu-ai-assistant"
+Issues = "https://github.com/aashishbharti04/pglu-ai-assistant/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["pglu"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+[tool.ruff.lint]
+ignore = ["E701", "E702", "E741", "E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
