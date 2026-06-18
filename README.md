@@ -86,10 +86,32 @@ pip install -e ".[full]"                 # editable install + all extras
 > Add extras any time: `pip install "pglu-ai-assistant[voice]"` (mic/speech) or `[system]`
 > (battery/CPU/RAM). On Linux, voice needs `sudo apt install portaudio19-dev` before PyAudio.
 
-## 🕹️ Usage
+## 🖥️ Desktop app — clone & click an icon
+
+Want a real desktop assistant with an icon you click whenever you need it? (Windows / macOS / Linux)
+
+```bash
+git clone https://github.com/aashishbharti04/pglu-ai-assistant
+cd pglu-ai-assistant
+pip install -e .                  # optional but recommended
+
+python -m pglu install-shortcut   # ➜ adds "Pglu AI Assistant" (with app icon) to your Desktop
+```
+
+Now **double-click “Pglu AI Assistant” on your Desktop** — a window opens where you **type (or 🎙️
+speak)** your request and Pglu answers (and talks back, if you enabled voice). On Windows it launches
+with `pythonw`, so there's **no black console window**.
+
+Prefer to open the window directly? `python -m pglu gui` (or `pglu gui`, or the `pglu-gui` command).
+
+<div align="center"><img src="docs/screenshot-gui.svg" alt="Pglu desktop window — chat-style assistant" width="420"></div>
+
+## 🕹️ Usage (command line)
 
 ```bash
 pglu                       # interactive text mode
+pglu gui                   # open the desktop window
+pglu install-shortcut      # add a clickable Desktop icon
 pglu --voice               # interactive voice mode (needs [voice] extra)
 pglu doctor                # environment & dependency check
 pglu skills                # list everything Pglu can do

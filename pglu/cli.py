@@ -42,8 +42,27 @@ def main(argv=None):
                   '    Install with:  pip install "pglu-ai-assistant[voice]"')
             voice = None
 
-    assistant = Assistant(cfg, voice=voice)
     one = args.command[0].lower() if args.command else ""
+
+    # GUI window (desktop app)
+    if one == "gui" and len(args.command) == 1:
+        from .gui import run_gui
+        run_gui()
+        return
+
+    # create a clickable desktop shortcut/icon
+    if one in ("install-shortcut", "shortcut") and len(args.command) == 1:
+        from .desktop import install_shortcut
+        try:
+            path = install_shortcut()
+            print(f"✓ Desktop shortcut created:\n    {path}\n"
+                  "Double-click 'Pglu AI Assistant' on your Desktop to open the window.")
+        except Exception as e:
+            print(f"Couldn't create the shortcut automatically: {e}\n"
+                  "You can still launch the app with:  pglu gui")
+        return
+
+    assistant = Assistant(cfg, voice=voice)
 
     if one == "doctor" and len(args.command) == 1:
         print(assistant.doctor())

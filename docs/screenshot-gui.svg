@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 620" font-family="Segoe UI, Inter, system-ui, sans-serif">
+  <rect width="460" height="620" rx="12" fill="#0b0f17"/>
+  <!-- title bar -->
+  <rect width="460" height="36" rx="12" fill="#131925"/><rect y="18" width="460" height="18" fill="#131925"/>
+  <text x="16" y="23" fill="#8a96aa" font-size="12">🤖 Pglu AI Assistant</text>
+  <circle cx="432" cy="18" r="5" fill="#ff5f56"/>
+  <!-- header -->
+  <text x="18" y="66" fill="#22d3ee" font-size="17" font-weight="bold">🤖 Pglu</text>
+  <text x="442" y="66" fill="#8a96aa" font-size="10" text-anchor="end">online · ask me anything</text>
+  <!-- chat panel -->
+  <rect x="16" y="80" width="428" height="430" rx="8" fill="#131925" stroke="#1e2a42"/>
+  <g font-size="12">
+    <text x="32" y="108" fill="#8b5cf6" font-weight="bold">Pglu</text>
+    <text x="32" y="126" fill="#e8edf5">Hi boss! Ask me to open apps, search the web,</text>
+    <text x="32" y="142" fill="#e8edf5">answer questions, set timers and more.</text>
+
+    <text x="32" y="176" fill="#22d3ee" font-weight="bold">You</text>
+    <text x="32" y="194" fill="#e8edf5">open notepad</text>
+    <text x="32" y="222" fill="#8b5cf6" font-weight="bold">Pglu</text>
+    <text x="32" y="240" fill="#e8edf5">Opening notepad.</text>
+
+    <text x="32" y="274" fill="#22d3ee" font-weight="bold">You</text>
+    <text x="32" y="292" fill="#e8edf5">who is Alan Turing</text>
+    <text x="32" y="320" fill="#8b5cf6" font-weight="bold">Pglu</text>
+    <text x="32" y="338" fill="#e8edf5">Alan Turing was an English mathematician and</text>
+    <text x="32" y="354" fill="#e8edf5">computer scientist, widely considered the</text>
+    <text x="32" y="370" fill="#e8edf5">father of theoretical computer science.</text>
+
+    <text x="32" y="404" fill="#22d3ee" font-weight="bold">You</text>
+    <text x="32" y="422" fill="#e8edf5">what's the weather in Mumbai</text>
+    <text x="32" y="450" fill="#8b5cf6" font-weight="bold">Pglu</text>
+    <text x="32" y="468" fill="#e8edf5">It's 31°C with partly cloudy in Mumbai,</text>
+    <text x="32" y="484" fill="#e8edf5">India. Wind around 14 km/h.</text>
+  </g>
+  <!-- quick chips -->
+  <g font-size="9">
+    <rect x="16" y="522" width="86" height="22" rx="11" fill="#131925"/><text x="59" y="537" fill="#8a96aa" text-anchor="middle">what time is it</text>
+    <rect x="108" y="522" width="92" height="22" rx="11" fill="#131925"/><text x="154" y="537" fill="#8a96aa" text-anchor="middle">weather in Delhi</text>
+    <rect x="206" y="522" width="78" height="22" rx="11" fill="#131925"/><text x="245" y="537" fill="#8a96aa" text-anchor="middle">open notepad</text>
+    <rect x="290" y="522" width="64" height="22" rx="11" fill="#131925"/><text x="322" y="537" fill="#8a96aa" text-anchor="middle">a joke</text>
+  </g>
+  <!-- input row -->
+  <rect x="16" y="556" width="328" height="40" rx="8" fill="#131925" stroke="#1e2a42"/>
+  <text x="30" y="581" fill="#8a96aa" font-size="12">Type your request…</text>
+  <rect x="350" y="556" width="42" height="40" rx="8" fill="#131925" stroke="#1e2a42"/><text x="371" y="582" font-size="15" text-anchor="middle">🎙️</text>
+  <rect x="398" y="556" width="46" height="40" rx="8" fill="#22d3ee"/><text x="421" y="581" fill="#06121a" font-size="12" font-weight="bold" text-anchor="middle">Send</text>
+</svg>

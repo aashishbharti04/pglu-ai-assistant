@@ -25,10 +25,13 @@ dependencies = []  # core features run on the standard library alone
 voice = ["SpeechRecognition>=3.10", "pyttsx3>=2.90", "PyAudio>=0.2.13"]
 system = ["psutil>=5.9"]
 full = ["SpeechRecognition>=3.10", "pyttsx3>=2.90", "PyAudio>=0.2.13", "psutil>=5.9"]
-dev = ["pytest", "ruff"]
+dev = ["pytest", "ruff", "pillow"]
 
 [project.scripts]
 pglu = "pglu.cli:main"
+
+[project.gui-scripts]
+pglu-gui = "pglu.gui:run_gui"
 
 [project.urls]
 Homepage = "https://github.com/aashishbharti04/pglu-ai-assistant"
@@ -36,6 +39,9 @@ Issues = "https://github.com/aashishbharti04/pglu-ai-assistant/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["pglu"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"pglu/assets/pglu.ico" = "pglu/assets/pglu.ico"
 
 [tool.ruff]
 line-length = 120
