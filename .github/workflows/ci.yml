@@ -23,9 +23,9 @@ jobs:
       - name: Install (dev extras)
         run: pip install -e ".[dev]"
       - name: Lint (ruff)
-        run: ruff check pglu tests
+        run: python -m ruff check pglu tests scripts
       - name: Tests (pytest)
-        run: pytest -q
+        run: python -m pytest -q
       - name: CLI smoke test
         run: |
           python main.py "what is 12 times 12"
