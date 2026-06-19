@@ -11,12 +11,18 @@ class Memory(Skill):
 
     def intents(self):
         return [
+            (r"^\s*(?:new chat|start (?:a )?new (?:chat|conversation)|new conversation|"
+             r"reset chat|start over|fresh start)\b", self.new_chat),
             (r"\b(forget (everything|all|our (chat|conversation|talk)|me)|"
-             r"clear (your |our )?(memory|chat|history)|wipe (your )?memory|start fresh)\b", self.forget),
+             r"clear (your |our )?(memory|chat|history)|wipe (your )?memory)\b", self.forget),
         ]
 
     def examples(self):
-        return ["forget everything", "clear our chat history"]
+        return ["new chat", "forget everything", "clear our chat history"]
+
+    def new_chat(self, text, m):
+        self.ctx.clear_memory()
+        return "🆕 Started a new chat — clean slate. What would you like to talk about?"
 
     def forget(self, text, m):
         self.ctx.clear_memory()

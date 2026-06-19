@@ -43,7 +43,8 @@ everything else runs locally.
 - 🧠 **Real conversational AI** — talk naturally (not canned replies), powered by a **local LLM (Ollama, free, private)** or **your own API key** (Claude / GPT / Gemini / Groq). Choose a **personality** and set the AI's name + who you are
 - 🎭 **Personalities** — Jarvis, Friendly, Professional, Funny, Savage, Loving, Motivational, Zen — or write your own custom style
 - 💬 **Streaming replies** — answers type out live, word by word, as the model generates them
-- 🗃️ **Persistent memory** — remembers your past conversations across sessions (toggle in ⚙ Settings; say “forget everything” to wipe)
+- 💬 **ChatGPT-style follow-ups** — it keeps the thread, resolves “he/it/that”, and stays on topic across turns
+- 🗃️ **Persistent memory** — remembers past conversations across sessions (toggle in ⚙ Settings). **＋ New chat** button (or say “new chat”) starts a fresh thread; “forget everything” wipes it
 - 🔈 **Voice selection** — pick any installed system voice (e.g. match a different voice to each persona)
 - 🔊 **Voice-output mode** — toggle 🔊 in the header (or ⚙ Settings) and Rani **reads every reply aloud**
 - 🖥️ **Run anything** — `cmd …` / `powershell …` / `run command …` executes it and shows the **real output or error** (never a fake "done"); opens **any installed app** (incl. Store apps)

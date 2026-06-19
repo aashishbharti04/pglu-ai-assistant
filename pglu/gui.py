@@ -54,6 +54,9 @@ def run_gui(minimized=False):
     header = tk.Frame(root, bg=BG)
     header.pack(fill="x", padx=16, pady=(14, 6))
     tk.Label(header, text="🤖 " + cfg.name, font=("Segoe UI", 16, "bold"), bg=BG, fg=USER).pack(side="left")
+    tk.Button(header, text="＋ New chat", font=("Segoe UI", 9, "bold"), bg=PANEL, fg=MUTED, bd=0,
+              cursor="hand2", activebackground=BORDER, activeforeground=TEXT, padx=10, pady=3,
+              command=lambda: _new_chat()).pack(side="left", padx=12)
     tk.Button(header, text="⚙", font=("Segoe UI", 13), bg=BG, fg=MUTED, bd=0, cursor="hand2",
               activebackground=BG, activeforeground=TEXT, command=lambda: open_settings()).pack(side="right")
     status = tk.StringVar(value="online · ask me anything")
@@ -74,6 +77,14 @@ def run_gui(minimized=False):
         chat.insert("end", text + "\n\n", "body")
         chat.see("end")
         chat.config(state="disabled")
+
+    def _new_chat():
+        assistant.clear_memory()              # fresh thread (clears context + saved memory)
+        chat.config(state="normal")
+        chat.delete("1.0", "end")
+        chat.config(state="disabled")
+        append("nova", f"🆕 New chat. Hi {cfg.user_name}! What can I do for you?")
+        status.set("online · ask me anything")
 
     # ---- quick chips ----
     chips = tk.Frame(root, bg=BG)
