@@ -21,6 +21,34 @@ OPENAI_BASE = {
 }
 
 
+def normalize_provider(s):
+    """Map friendly/loose input ('ollama (local, free)', 'Claude', 'gpt') to a canonical id."""
+    s = (s or "").strip().lower()
+    if not s:
+        return "auto"
+    if "ollama" in s:
+        return "ollama"
+    if s.startswith("none") or s == "off":
+        return "none"
+    if "auto" in s:
+        return "auto"
+    if "anthropic" in s or "claude" in s:
+        return "anthropic"
+    if "openrouter" in s:
+        return "openrouter"
+    if "groq" in s:
+        return "groq"
+    if "openai" in s or "gpt" in s or "chatgpt" in s:
+        return "openai"
+    if "gemini" in s or "google" in s:
+        return "gemini"
+    return s
+
+
+def needs_key(provider):
+    return normalize_provider(provider) not in ("ollama", "none", "auto")
+
+
 def _post(url, payload, headers, timeout=60):
     data = json.dumps(payload).encode("utf-8")
     h = {"Content-Type": "application/json", **headers}
@@ -32,7 +60,7 @@ def _post(url, payload, headers, timeout=60):
 class Brain:
     def __init__(self, cfg):
         self.cfg = cfg
-        self.provider = (cfg.ai_provider or "auto").lower()
+        self.provider = normalize_provider(cfg.ai_provider)
         self.key = (cfg.ai_api_key or "").strip()
         self.model = (cfg.ai_model or "").strip()
         self._avail = None

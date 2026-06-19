@@ -115,10 +115,13 @@ def _setup(cfg):
         else:
             cfg.custom_persona = sel
 
-    print("\n  AI brain provider:  ollama (local, free) | openai | anthropic | gemini | groq | openrouter | none")
-    cfg.ai_provider = ask("Provider", cfg.ai_provider or "auto")
-    if cfg.ai_provider not in ("ollama", "none", "auto", ""):
+    from .ai import normalize_provider, needs_key
+    print("\n  AI brain provider — type one word:  ollama (local, free) | openai | anthropic | gemini | groq | none")
+    cfg.ai_provider = normalize_provider(ask("Provider", normalize_provider(cfg.ai_provider) or "ollama"))
+    if needs_key(cfg.ai_provider):
         cfg.ai_api_key = ask("API key (stored locally in ~/.pglu/config.json)", cfg.ai_api_key)
+    else:
+        print("  (No API key needed for Ollama — using your local models.)")
     cfg.ai_model = ask("Model (blank = sensible default)", cfg.ai_model)
 
     cfg.save()

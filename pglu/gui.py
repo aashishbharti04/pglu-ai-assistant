@@ -269,7 +269,8 @@ def run_gui():
             cfg.user_about = about.get().strip()
             cfg.persona = persona_var.get()
             cfg.custom_persona = custom.get().strip()
-            cfg.ai_provider = provider.get().strip() or "auto"
+            from .ai import normalize_provider
+            cfg.ai_provider = normalize_provider(provider.get())
             cfg.ai_model = model.get().strip()
             cfg.ai_api_key = apikey.get().strip()
             cfg.wake_hotkey_enabled = hk.get(); cfg.wake_hotkey = hk_entry.get().strip() or "<ctrl>+<alt>+p"
