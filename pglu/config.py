@@ -37,6 +37,7 @@ class Config:
     ai_api_key: str = ""
     memory_enabled: bool = True  # remember conversations across sessions
     tts_voice: str = ""          # preferred system voice (name substring); blank = default
+    speak_replies: bool = False  # read replies aloud (voice-output mode)
 
     @classmethod
     def load(cls) -> "Config":

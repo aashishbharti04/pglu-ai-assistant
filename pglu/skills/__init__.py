@@ -7,8 +7,9 @@ from .productivity import Productivity
 from .fun import Fun
 from .knowledge import Knowledge
 from .memory import Memory
+from .run import Run
 
-SKILL_CLASSES = [Memory, System, Apps, Web, Productivity, Fun, Knowledge]
+SKILL_CLASSES = [Memory, Run, System, Apps, Web, Productivity, Fun, Knowledge]
 
 
 def build_skills(ctx):

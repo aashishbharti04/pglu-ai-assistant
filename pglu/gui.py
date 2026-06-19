@@ -89,7 +89,22 @@ def run_gui(minimized=False):
     entry = tk.Entry(row, font=("Segoe UI", 12), bg=PANEL, fg=TEXT, bd=0, insertbackground=USER,
                      highlightthickness=1, highlightbackground=BORDER, highlightcolor=USER)
     entry.pack(side="left", fill="x", expand=True, ipady=8, padx=(0, 8))
-    speak_var = tk.BooleanVar(value=bool(voice and voice.tts_ok))
+    speak_var = tk.BooleanVar(value=bool(voice and voice.tts_ok) and getattr(cfg, "speak_replies", False))
+
+    # quick voice-output toggle in the header (speaks replies aloud when on)
+    if voice and voice.tts_ok:
+        def _toggle_speak():
+            speak_var.set(not speak_var.get())
+            cfg.speak_replies = speak_var.get()
+            cfg.save()
+            spk_btn.config(text="🔊" if speak_var.get() else "🔇",
+                           fg=(USER if speak_var.get() else MUTED))
+            status.set("🔊 voice replies ON" if speak_var.get() else "🔇 voice replies off")
+        spk_btn = tk.Button(header, text="🔊" if speak_var.get() else "🔇", font=("Segoe UI", 12),
+                            bg=BG, fg=(USER if speak_var.get() else MUTED), bd=0, cursor="hand2",
+                            activebackground=BG, activeforeground=TEXT,
+                            command=_toggle_speak)
+        spk_btn.pack(in_=header, side="right", padx=2)
 
     def styled_btn(parent, text, cmd, primary=False):
         return tk.Button(parent, text=text, command=cmd, cursor="hand2", bd=0, font=("Segoe UI", 11, "bold"),
@@ -310,6 +325,7 @@ def run_gui(minimized=False):
 
         def save():
             speak_var.set(spk.get())
+            cfg.speak_replies = spk.get()
             cfg.name = ai_name.get().strip() or cfg.name
             cfg.user_name = your_name.get().strip()
             cfg.user_about = about.get().strip()

@@ -45,6 +45,8 @@ everything else runs locally.
 - 💬 **Streaming replies** — answers type out live, word by word, as the model generates them
 - 🗃️ **Persistent memory** — remembers your past conversations across sessions (toggle in ⚙ Settings; say “forget everything” to wipe)
 - 🔈 **Voice selection** — pick any installed system voice (e.g. match a different voice to each persona)
+- 🔊 **Voice-output mode** — toggle 🔊 in the header (or ⚙ Settings) and Rani **reads every reply aloud**
+- 🖥️ **Run anything** — `cmd …` / `powershell …` / `run command …` executes it and shows the **real output or error** (never a fake "done"); opens **any installed app** (incl. Store apps)
 - 🗔 **System tray** — closing the window minimises Pglu to the tray; click the tray icon (or right-click → Open) to bring it back, so it keeps listening for wake triggers
 - 🚀 **Auto-start on login** — `pglu autostart` opens it (minimized) every boot; no terminal needed
 - 🧩 **Plugin skill architecture** — 6 skills, ~28 intents; add your own in a few lines

@@ -59,7 +59,7 @@ def test_help_and_exit():
 
 def test_skills_and_intents_loaded():
     a = make()
-    assert len(a.skills) == 7
+    assert len(a.skills) == 8
     assert len(a.intents) >= 20
 
 
@@ -98,11 +98,24 @@ class _FakeBrain:
         return "FAKE:" + messages[-1]["content"]
 
 
+def _cfg_nomem():
+    c = Config()
+    c.memory_enabled = False   # don't touch the real ~/.pglu/memory.json during tests
+    return c
+
+
 def test_brain_handles_chat_but_tools_stay_local():
-    a = Assistant(Config(), brain=_FakeBrain())
+    a = Assistant(_cfg_nomem(), brain=_FakeBrain())
     assert "100" in a.respond("what is 25 times 4")          # math = local tool, not the brain
     assert a.respond("i love you").startswith("FAKE:")        # open chat -> brain
     assert a.respond("hello").startswith("FAKE:")             # greeting defers to brain
+    assert a.respond("tell me about yourself").startswith("FAKE:")   # self/knowledge -> brain
+    assert a.respond("who is Alan Turing").startswith("FAKE:")       # knowledge -> brain
+
+
+def test_run_command_returns_real_output():
+    out = make().respond("cmd echo pglutest123")
+    assert "pglutest123" in out
 
 
 def test_offline_greeting_without_brain():

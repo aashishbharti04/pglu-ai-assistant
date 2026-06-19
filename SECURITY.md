@@ -26,4 +26,9 @@ You'll get an acknowledgement within a few days.
 - Real actions (opening apps, system info, timers) are executed by the local tool layer, never by
   the model — the model only converses.
 
-> Be mindful when extending Pglu with shell-executing skills — never pass raw user text to a shell.
+### The `cmd` / command runner
+- The Run skill executes shell commands you explicitly prefix (`cmd …`, `powershell …`,
+  `run command …`). It is **user-triggered only** — the AI model cannot invoke it; the model only
+  converses. Output and errors are returned verbatim (never faked).
+- Treat it like a terminal: only run commands you understand. Avoid dictating destructive commands
+  by voice (mis-hearing is possible). There is a 30-second timeout.

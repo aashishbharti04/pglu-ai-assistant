@@ -59,6 +59,9 @@ class Knowledge(Skill):
             return "I couldn't reach the weather service. Check your connection."
 
     def wiki(self, text, m):
+        # With an AI brain, let it answer conversationally (self/opinions/general knowledge).
+        if self.ctx.brain_available:
+            return None
         q = m.group("q").strip().rstrip("?.")
         # let the math intent win for "what is 2+2" — guard here too
         if safe_math(q) is not None:
