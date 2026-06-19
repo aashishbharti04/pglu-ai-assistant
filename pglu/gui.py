@@ -20,7 +20,7 @@ QUICK = ["what time is it", "weather in Delhi", "open notepad",
          "what is 24 times 7", "who is Alan Turing", "tell me a joke"]
 
 
-def run_gui():
+def run_gui(minimized=False):
     import tkinter as tk
     from tkinter import scrolledtext
     from .wake import WakeListener, hotkey_available, clap_available, word_available
@@ -303,6 +303,8 @@ def run_gui():
     if wake["listener"] and wake["listener"].any_enabled():
         status.set("⚡ Jarvis mode on · ask me anything")
     entry.focus_set()
+    if minimized:
+        root.iconify()   # start in the taskbar (used by autostart)
     root.mainloop()
 
 

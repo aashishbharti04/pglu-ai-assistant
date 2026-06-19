@@ -49,10 +49,26 @@ def main(argv=None):
         _setup(cfg)
         return
 
-    # GUI window (desktop app)
-    if one == "gui" and len(args.command) == 1:
+    # GUI window (desktop app); `gui min` starts minimized (used by autostart)
+    if one == "gui" and len(args.command) <= 2:
         from .gui import run_gui
-        run_gui()
+        run_gui(minimized=(len(args.command) == 2 and args.command[1].lower() == "min"))
+        return
+
+    # start automatically on login:  `pglu autostart`  /  `pglu autostart off`
+    if one == "autostart" and len(args.command) <= 2:
+        from .desktop import install_autostart, remove_autostart
+        off = len(args.command) == 2 and args.command[1].lower() in ("off", "disable", "remove")
+        try:
+            if off:
+                p = remove_autostart()
+                print("✓ Autostart disabled." if p else "Autostart was not set.")
+            else:
+                p = install_autostart(minimized=True)
+                print(f"✓ Pglu will now start (minimized) when you log in:\n    {p}\n"
+                      "  Disable any time with:  pglu autostart off")
+        except Exception as e:
+            print(f"Couldn't change autostart automatically: {e}")
         return
 
     # create a clickable desktop shortcut/icon

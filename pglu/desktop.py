@@ -79,3 +79,65 @@ def install_shortcut() -> str:
         f.write(content)
     os.chmod(path, 0o755)
     return path
+
+
+def _startup_dir():
+    return os.path.join(os.environ.get("APPDATA", ""), "Microsoft", "Windows",
+                        "Start Menu", "Programs", "Startup")
+
+
+def install_autostart(minimized=True):
+    """Launch Pglu automatically when the user logs in."""
+    system = platform.system()
+    pyw = _pythonw()
+    main_py = _target()
+    suffix = " gui min" if minimized else " gui"
+
+    if system == "Windows":
+        sd = _startup_dir()
+        os.makedirs(sd, exist_ok=True)
+        lnk = os.path.join(sd, "Pglu AI Assistant.lnk")
+        if main_py:
+            args = f'"{main_py}"{suffix}'
+            workdir = os.path.dirname(main_py)
+        else:
+            args = f"-m pglu{suffix}"
+            workdir = os.path.expanduser("~")
+        ps = (
+            "$W=New-Object -ComObject WScript.Shell;"
+            f'$S=$W.CreateShortcut("{lnk}");'
+            f'$S.TargetPath="{pyw}";'
+            f"$S.Arguments='{args}';"
+            f'$S.WorkingDirectory="{workdir}";'
+            f'$S.IconLocation="{ICON}";'
+            '$S.Description="Pglu AI Assistant";'
+            "$S.Save()"
+        )
+        subprocess.run(["powershell", "-NoProfile", "-NonInteractive", "-Command", ps], check=True)
+        return lnk
+
+    if system == "Linux":
+        d = os.path.join(os.path.expanduser("~"), ".config", "autostart")
+        os.makedirs(d, exist_ok=True)
+        path = os.path.join(d, "pglu-ai-assistant.desktop")
+        exec_line = (f'{pyw} "{main_py}"{suffix}') if main_py else (f"{pyw} -m pglu{suffix}")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("[Desktop Entry]\nType=Application\nName=Pglu AI Assistant\n"
+                    f"Exec={exec_line}\nIcon={ICON}\nTerminal=false\nX-GNOME-Autostart-enabled=true\n")
+        return path
+
+    return None  # macOS: add Pglu via System Settings → General → Login Items
+
+
+def remove_autostart():
+    system = platform.system()
+    if system == "Windows":
+        p = os.path.join(_startup_dir(), "Pglu AI Assistant.lnk")
+    elif system == "Linux":
+        p = os.path.join(os.path.expanduser("~"), ".config", "autostart", "pglu-ai-assistant.desktop")
+    else:
+        return None
+    if os.path.exists(p):
+        os.remove(p)
+        return p
+    return None

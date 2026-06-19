@@ -178,6 +178,7 @@ pglu                       # interactive text mode
 pglu setup                 # set AI name, persona & brain provider
 pglu gui                   # open the desktop window
 pglu install-shortcut      # add a clickable Desktop icon
+pglu autostart             # launch on login (minimized) · `pglu autostart off` to undo
 pglu --voice               # interactive voice mode (needs [voice] extra)
 pglu doctor                # environment & dependency check
 pglu skills                # list everything Pglu can do
