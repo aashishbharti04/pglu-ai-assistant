@@ -31,9 +31,12 @@ def build_system_prompt(cfg) -> str:
     who += f" for {cfg.user_name}" if cfg.user_name else ""
     about = f" Here is who they are: {cfg.user_about}." if cfg.user_about else ""
     caps = (" The app itself performs real actions — opening apps, system info (battery/CPU/RAM/disk), "
-            "timers, notes, web searches — and handles those BEFORE you ever see them. So you mainly "
-            "converse. Never pretend you performed an action or claim something happened unless you "
-            "actually know it did — if you're unsure or can't do it, say so honestly. Keep replies "
-            "short, natural and in character.")
+            "timers, notes, web searches — and handles those BEFORE you ever see them, so you mainly "
+            "converse. Never pretend you performed an action unless you know it happened.")
+    helpful = (" Be genuinely helpful and accurate: when asked a question or for information, give a "
+               "real, substantive answer FIRST — your personality only colours HOW you say it, it must "
+               "never replace the actual answer. Do not deflect with flattery or compliments. If you "
+               "honestly don't know something, say so plainly instead of making it up. Keep replies "
+               "concise, natural and in character.")
     today = datetime.datetime.now().strftime("%A, %d %B %Y, %I:%M %p")
-    return f"{who}.{about} {style}{caps} For context, right now it is {today}."
+    return f"{who}.{about} {style}{caps}{helpful} For context, right now it is {today}."

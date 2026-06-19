@@ -109,8 +109,9 @@ def test_brain_handles_chat_but_tools_stay_local():
     assert "100" in a.respond("what is 25 times 4")          # math = local tool, not the brain
     assert a.respond("i love you").startswith("FAKE:")        # open chat -> brain
     assert a.respond("hello").startswith("FAKE:")             # greeting defers to brain
-    assert a.respond("tell me about yourself").startswith("FAKE:")   # self/knowledge -> brain
-    assert a.respond("who is Alan Turing").startswith("FAKE:")       # knowledge -> brain
+    assert a.respond("tell me about yourself").startswith("FAKE:")   # self -> brain
+    # unknown entity: not on Wikipedia -> falls through to the brain (works offline too)
+    assert a.respond("who is zzqwx nonexistliperson").startswith("FAKE:")
 
 
 def test_run_command_returns_real_output():

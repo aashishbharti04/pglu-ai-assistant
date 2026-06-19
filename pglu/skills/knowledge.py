@@ -59,17 +59,22 @@ class Knowledge(Skill):
             return "I couldn't reach the weather service. Check your connection."
 
     def wiki(self, text, m):
-        # With an AI brain, let it answer conversationally (self/opinions/general knowledge).
-        if self.ctx.brain_available:
-            return None
         q = m.group("q").strip().rstrip("?.")
-        # let the math intent win for "what is 2+2" — guard here too
+        # math like "what is 2+2"
         if safe_math(q) is not None:
             return f"That's {safe_math(q)}."
+        # self/opinion questions → the AI brain (not Wikipedia)
+        if self.ctx.brain_available and q.lower() in (
+                "yourself", "you", "urself", "your self", "me", "myself", "us"):
+            return None
+        # grounded factual lookup first (accurate for real people/things)
         try:
             d = get_json("https://en.wikipedia.org/api/rest_v1/page/summary/" + quote(q))
             if d.get("extract"):
                 return d["extract"]
         except Exception:
             pass
+        # not on Wikipedia → let the AI answer (it may know, or admit it doesn't)
+        if self.ctx.brain_available:
+            return None
         return f"I couldn't find that. Try “search {q}” to look it up on the web."
