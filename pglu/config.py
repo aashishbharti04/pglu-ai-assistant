@@ -35,6 +35,8 @@ class Config:
     ai_provider: str = "auto"   # auto | ollama | openai | anthropic | gemini | groq | openrouter | none
     ai_model: str = ""
     ai_api_key: str = ""
+    memory_enabled: bool = True  # remember conversations across sessions
+    tts_voice: str = ""          # preferred system voice (name substring); blank = default
 
     @classmethod
     def load(cls) -> "Config":

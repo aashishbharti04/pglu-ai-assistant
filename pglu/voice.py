@@ -8,6 +8,16 @@ from __future__ import annotations
 from . import audio
 
 
+def list_voices():
+    """Return [(id, name), ...] of installed system TTS voices (empty if unavailable)."""
+    try:
+        import pyttsx3
+        eng = pyttsx3.init()
+        return [(v.id, v.name) for v in eng.getProperty("voices")]
+    except Exception:
+        return []
+
+
 class Voice:
     def __init__(self, config):
         self.config = config
@@ -20,6 +30,24 @@ class Voice:
             self.tts = pyttsx3.init()
             self.tts.setProperty("rate", config.tts_rate)
             self.tts_ok = True
+            if (config.tts_voice or "").strip():
+                self.set_voice(config.tts_voice)
+        except Exception:
+            pass
+
+    def set_voice(self, name):
+        """Switch the speaking voice to the first installed voice matching `name`."""
+        self.config.tts_voice = name or ""
+        if not self.tts_ok:
+            return
+        pref = (name or "").strip().lower()
+        if not pref:
+            return
+        try:
+            for v in self.tts.getProperty("voices"):
+                if pref in (v.name or "").lower() or pref in (v.id or "").lower():
+                    self.tts.setProperty("voice", v.id)
+                    return
         except Exception:
             pass
 

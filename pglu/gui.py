@@ -252,11 +252,28 @@ def run_gui(minimized=False):
         hint("Provider: ollama (local, free) · openai · anthropic · gemini · groq · none. "
              "Local AI: install Ollama + `ollama pull llama3.2`. Keys are stored locally.")
 
-        hdr("Voice")
+        hdr("Voice & memory")
         spk = tk.BooleanVar(value=speak_var.get())
         chk(win, "🔊 Speak replies out loud", spk, enabled=bool(voice and voice.tts_ok))
         if not (voice and voice.tts_ok):
             hint('Install voice output:  pip install "pglu-ai-assistant[voice]"')
+        voice_var = [None]
+        if voice and voice.tts_ok:
+            from .voice import list_voices
+            vs = list_voices()
+            if vs:
+                vrow = tk.Frame(win, bg=BG); vrow.pack(fill="x", padx=18, pady=2)
+                tk.Label(vrow, text="Voice", bg=BG, fg=MUTED, font=("Segoe UI", 9), width=11, anchor="w").pack(side="left")
+                names = ["(default)"] + [n for _, n in vs]
+                cur = cfg.tts_voice if cfg.tts_voice in names else "(default)"
+                voice_var[0] = tk.StringVar(value=cur)
+                vom = tk.OptionMenu(vrow, voice_var[0], *names)
+                vom.config(bg=PANEL, fg=TEXT, bd=0, highlightthickness=1, highlightbackground=BORDER,
+                           activebackground=BORDER, font=("Segoe UI", 9))
+                vom["menu"].config(bg=PANEL, fg=TEXT)
+                vom.pack(side="left", fill="x", expand=True)
+        mem_var = tk.BooleanVar(value=getattr(cfg, "memory_enabled", True))
+        chk(win, "🧠 Remember conversations across sessions", mem_var)
 
         hdr("⚡ Jarvis wake mode")
         hint("Wake Pglu while the window is minimized (PC awake). Choose any triggers:")
@@ -305,6 +322,12 @@ def run_gui(minimized=False):
             cfg.wake_hotkey_enabled = hk.get(); cfg.wake_hotkey = hk_entry.get().strip() or "<ctrl>+<alt>+p"
             cfg.wake_clap_enabled = cl.get(); cfg.clap_threshold = float(cl_scale.get())
             cfg.wake_word_enabled = wd.get(); cfg.wake_word = wd_entry.get().strip() or "pglu"
+            cfg.memory_enabled = mem_var.get()
+            if voice_var[0] is not None:
+                tv = voice_var[0].get()
+                cfg.tts_voice = "" if tv == "(default)" else tv
+                if voice:
+                    voice.set_voice(cfg.tts_voice)
             cfg.save()
             assistant.brain = Brain(cfg)   # pick up new provider / key / model
             restart_wake()

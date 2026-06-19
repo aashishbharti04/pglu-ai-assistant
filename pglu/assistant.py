@@ -15,7 +15,12 @@ class Assistant:
         self.config = config
         self.voice = voice
         self.brain = brain          # optional LLM brain (pglu.ai.Brain)
-        self.history = []           # rolling chat memory: [{role, content}, ...]
+        # rolling chat memory: [{role, content}, ...] — loaded from disk so it persists
+        try:
+            from . import memory
+            self.history = memory.load() if getattr(config, "memory_enabled", True) else []
+        except Exception:
+            self.history = []
         self.timers = []
         self.skills = sorted(build_skills(self), key=lambda s: s.priority)
         # flat intent table: (compiled_regex, handler, skill), preserving intra-skill order
@@ -71,7 +76,21 @@ class Assistant:
     def _remember(self, text, out):
         self.history.append({"role": "user", "content": text})
         self.history.append({"role": "assistant", "content": out})
-        self.history = self.history[-12:]
+        self.history = self.history[-50:]
+        if getattr(self.config, "memory_enabled", True):
+            try:
+                from . import memory
+                memory.save(self.history)
+            except Exception:
+                pass
+
+    def clear_memory(self):
+        self.history = []
+        try:
+            from . import memory
+            memory.clear()
+        except Exception:
+            pass
 
     def _chat(self, text):
         from .persona import build_system_prompt

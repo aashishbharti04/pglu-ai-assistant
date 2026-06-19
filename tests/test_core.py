@@ -59,8 +59,21 @@ def test_help_and_exit():
 
 def test_skills_and_intents_loaded():
     a = make()
-    assert len(a.skills) == 6
+    assert len(a.skills) == 7
     assert len(a.intents) >= 20
+
+
+def test_memory_persists_and_clears(tmp_path, monkeypatch):
+    import pglu.memory as mem
+    f = tmp_path / "memory.json"
+    monkeypatch.setattr(mem, "MEM_FILE", str(f))
+    a = Assistant(Config(), brain=_FakeBrain())
+    a.respond("i love you")                       # chat -> brain -> remembered + saved
+    assert f.exists()
+    b = Assistant(Config(), brain=_FakeBrain())    # new session loads prior memory
+    assert any("i love you" in m["content"] for m in b.history)
+    b.respond("forget everything")                 # memory skill clears it
+    assert mem.load() == []
 
 
 def test_doctor_runs():
