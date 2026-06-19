@@ -22,6 +22,7 @@ class Assistant:
         except Exception:
             self.history = []
         self.timers = []
+        self._just_cleared = False
         self.skills = sorted(build_skills(self), key=lambda s: s.priority)
         # flat intent table: (compiled_regex, handler, skill), preserving intra-skill order
         self.intents = []
@@ -64,6 +65,7 @@ class Assistant:
             return ""
         reply = self.tool_reply(text)
         if reply is not None:
+            self.note_exchange(text, reply)   # tools are part of the conversation too (context!)
             return reply
         if self.brain_available:           # conversation → LLM, in character
             out = self._chat(text)
@@ -74,8 +76,8 @@ class Assistant:
                 "so I can really chat.)")
 
     def _remember(self, text, out):
-        self.history.append({"role": "user", "content": text})
-        self.history.append({"role": "assistant", "content": out})
+        self.history.append({"role": "user", "content": (text or "")[:1000]})
+        self.history.append({"role": "assistant", "content": (out or "")[:1000]})
         self.history = self.history[-50:]
         if getattr(self.config, "memory_enabled", True):
             try:
@@ -84,8 +86,16 @@ class Assistant:
             except Exception:
                 pass
 
+    def note_exchange(self, text, reply):
+        """Record a turn — unless we just cleared memory (don't re-save the 'forget' command)."""
+        if self._just_cleared:
+            self._just_cleared = False
+            return
+        self._remember(text, reply)
+
     def clear_memory(self):
         self.history = []
+        self._just_cleared = True
         try:
             from . import memory
             memory.clear()
@@ -94,7 +104,7 @@ class Assistant:
 
     def _chat(self, text):
         from .persona import build_system_prompt
-        msgs = self.history[-8:] + [{"role": "user", "content": text}]
+        msgs = self.history[-16:] + [{"role": "user", "content": text}]
         out = self.brain.reply(build_system_prompt(self.config), msgs)
         if out:
             self._remember(text, out)
@@ -103,7 +113,7 @@ class Assistant:
     def stream_chat(self, text, on_delta):
         """Stream an in-character reply; calls on_delta(chunk) live. Returns the full text."""
         from .persona import build_system_prompt
-        msgs = self.history[-8:] + [{"role": "user", "content": text}]
+        msgs = self.history[-16:] + [{"role": "user", "content": text}]
         acc = []
         for chunk in self.brain.stream(build_system_prompt(self.config), msgs):
             if chunk:

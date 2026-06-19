@@ -36,7 +36,10 @@ def build_system_prompt(cfg) -> str:
     helpful = (" Be genuinely helpful and accurate: when asked a question or for information, give a "
                "real, substantive answer FIRST — your personality only colours HOW you say it, it must "
                "never replace the actual answer. Do not deflect with flattery or compliments. If you "
-               "honestly don't know something, say so plainly instead of making it up. Keep replies "
+               "honestly don't know something, say so plainly instead of making it up."
+               " This is an ongoing conversation: use the prior messages as context — understand "
+               "follow-up questions and pronouns (he/she/it/that/they) from what was just discussed, "
+               "and stay on the current topic unless the user clearly changes it. Keep replies "
                "concise, natural and in character.")
     today = datetime.datetime.now().strftime("%A, %d %B %Y, %I:%M %p")
     return f"{who}.{about} {style}{caps}{helpful} For context, right now it is {today}."

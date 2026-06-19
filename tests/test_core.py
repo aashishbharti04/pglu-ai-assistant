@@ -119,6 +119,30 @@ def test_run_command_returns_real_output():
     assert "pglutest123" in out
 
 
+class _CtxBrain:
+    def __init__(self):
+        self.last = None
+
+    def available(self):
+        return True
+
+    def effective_provider(self):
+        return "fake"
+
+    def reply(self, system, messages):
+        self.last = messages
+        return "ok"
+
+
+def test_followup_keeps_prior_context():
+    b = _CtxBrain()
+    a = Assistant(_cfg_nomem(), brain=b)
+    a.respond("what is 25 times 4")     # tool answer — should be remembered
+    a.respond("now explain that")       # brain — must receive the earlier exchange
+    blob = " ".join(m["content"] for m in b.last)
+    assert "25 times 4" in blob and "100" in blob
+
+
 def test_offline_greeting_without_brain():
     r = make().respond("hello")  # no brain
     assert r and "FAKE" not in r

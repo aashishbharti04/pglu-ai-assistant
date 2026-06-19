@@ -22,10 +22,11 @@ class Web(Skill):
     priority = 30
 
     def intents(self):
+        # anchored to the START so mid-sentence words ("...does he play for?") aren't hijacked
         return [
-            (r"\b(?:youtube|play)\s+(?P<q>.+)", self.youtube),
-            (r"\b(?:search(?:\s+for)?|google|look up|find)\s+(?P<q>.+)", self.search),
-            (r"\bopen\s+(?P<site>[\w.\- ]+)", self.open_site),
+            (r"^\s*(?:youtube|play)\s+(?P<q>.+)", self.youtube),
+            (r"^\s*(?:search(?:\s+for)?|google|look\s+up)\s+(?P<q>.+)", self.search),
+            (r"^\s*open\s+(?P<site>[\w.\- ]+)\s*$", self.open_site),
         ]
 
     def examples(self):

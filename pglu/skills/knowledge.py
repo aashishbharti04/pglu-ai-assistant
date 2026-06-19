@@ -25,7 +25,7 @@ class Knowledge(Skill):
             (r"\bwhat'?s?(?: the)?(?: today'?s)? date\b|\bwhat day is it\b|\btoday'?s date\b|\bcurrent date\b", self.date),
             (r"\b(?:calculate|compute|what is|what'?s|how much is)\b.*[\d].*[-+*/%]|\b\d+\s*(?:plus|minus|times|multiplied by|divided by|into|over|mod|power)\b", self.math),
             (r"\bweather(?:\s+(?:in|at|for)\s+(?P<city>[a-z .'-]+))?", self.weather),
-            (r"\b(?:who(?:'s| is| was| are)|what(?:'s| is| was| are)|define|tell me about|explain)\s+(?P<q>.+)", self.wiki),
+            (r"^\s*(?:who(?:'s| is| was| are)|what(?:'s| is| was| are)|define|tell me about|explain)\s+(?P<q>.+)", self.wiki),
         ]
 
     def examples(self):

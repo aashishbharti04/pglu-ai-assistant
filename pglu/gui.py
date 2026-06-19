@@ -129,6 +129,7 @@ def run_gui(minimized=False):
             return
         tool = assistant.tool_reply(text)            # actions / facts = instant
         if tool is not None:
+            assistant.note_exchange(text, tool)      # keep tool answers in context for follow-ups
             _done(tool)
             return
         if not assistant.brain_available:

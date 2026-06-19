@@ -114,7 +114,7 @@ class Apps(Skill):
     priority = 25  # before Web's generic "open ..."
 
     def intents(self):
-        return [(r"\b(?:open|launch|start|run)\s+(?P<app>.+)", self.open_app)]
+        return [(r"^\s*(?:open|launch|start)\s+(?P<app>.+)", self.open_app)]
 
     def examples(self):
         return ["open notepad", "open calculator", "open chrome", "launch task manager", "open <any app>"]
