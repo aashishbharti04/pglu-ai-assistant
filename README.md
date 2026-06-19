@@ -181,7 +181,8 @@ for a user app.)
 ```bash
 pglu                       # interactive text mode
 pglu setup                 # set AI name, persona & brain provider
-pglu gui                   # open the desktop window
+pglu start                 # open the window DETACHED — safe to close the terminal after
+pglu gui                   # open the window (stays tied to this terminal)
 pglu install-shortcut      # add a clickable Desktop icon
 pglu autostart             # launch on login (minimized) · `pglu autostart off` to undo
 pglu --voice               # interactive voice mode (needs [voice] extra)

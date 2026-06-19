@@ -49,6 +49,13 @@ def main(argv=None):
         _setup(cfg)
         return
 
+    # launch the GUI detached so it survives closing the terminal
+    if one in ("start", "background", "bg") and len(args.command) <= 2:
+        from .desktop import launch_detached
+        launch_detached(minimized=(len(args.command) == 2 and args.command[1].lower() == "min"))
+        print(f"✓ {cfg.name} launched in the background — you can safely close this terminal.")
+        return
+
     # GUI window (desktop app); `gui min` starts minimized (used by autostart)
     if one == "gui" and len(args.command) <= 2:
         from .gui import run_gui

@@ -81,6 +81,23 @@ def install_shortcut() -> str:
     return path
 
 
+def launch_detached(minimized=False):
+    """Start the GUI as an independent process (survives closing the terminal)."""
+    pyw = _pythonw()
+    main_py = _target()
+    args = [pyw] + ([main_py, "gui"] if main_py else ["-m", "pglu", "gui"])
+    if minimized:
+        args.append("min")
+    kwargs = {}
+    if platform.system() == "Windows":
+        # DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP — fully detach from the console
+        kwargs["creationflags"] = 0x00000008 | 0x00000200
+        kwargs["close_fds"] = True
+    else:
+        kwargs["start_new_session"] = True
+    subprocess.Popen(args, **kwargs)
+
+
 def _startup_dir():
     return os.path.join(os.environ.get("APPDATA", ""), "Microsoft", "Windows",
                         "Start Menu", "Programs", "Startup")
