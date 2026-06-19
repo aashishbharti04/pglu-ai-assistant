@@ -112,18 +112,46 @@ def run_gui(minimized=False):
             status.set("bye 👋")
             root.after(400, _quit)
             return
+        tool = assistant.tool_reply(text)            # actions / facts = instant
+        if tool is not None:
+            _done(tool)
+            return
+        if not assistant.brain_available:
+            _done("I'm not sure how to help with that — type 'help', or run `pglu setup` to give me an AI brain.")
+            return
+        # conversation → stream the reply live
         status.set("thinking…")
-        threading.Thread(target=_work, args=(text,), daemon=True).start()
-
-    def _work(text):
-        reply = assistant.respond(text)
-        root.after(0, lambda: _done(reply))
+        chat.config(state="normal")
+        chat.insert("end", cfg.name + "\n", "nova_name")
+        chat.config(state="disabled")
+        threading.Thread(target=_stream_worker, args=(text,), daemon=True).start()
 
     def _done(reply):
         status.set("online · ask me anything")
         append("nova", reply)
         if speak_var.get() and voice:
             threading.Thread(target=lambda: voice.speak(reply), daemon=True).start()
+
+    def _insert_chunk(c):
+        chat.config(state="normal")
+        chat.insert("end", c, "body")
+        chat.see("end")
+        chat.config(state="disabled")
+
+    def _stream_worker(text):
+        full = assistant.stream_chat(text, lambda c: root.after(0, lambda: _insert_chunk(c)))
+        root.after(0, lambda: _stream_end(full))
+
+    def _stream_end(full):
+        chat.config(state="normal")
+        chat.insert("end", "\n\n", "body")
+        chat.see("end")
+        chat.config(state="disabled")
+        status.set("online · ask me anything")
+        if not full:
+            _insert_chunk("(…no reply — check `pglu doctor`.)\n\n")
+        elif speak_var.get() and voice:
+            threading.Thread(target=lambda: voice.speak(full), daemon=True).start()
 
     def on_mic():
         if not (voice and voice.stt_ok):
@@ -156,6 +184,7 @@ def run_gui(minimized=False):
             entry.focus_set()
 
     wake = {"listener": None}
+    tray = {"icon": None}
 
     def restart_wake():
         if wake["listener"]:
@@ -291,9 +320,39 @@ def run_gui(minimized=False):
                 wake["listener"].stop()
         except Exception:
             pass
+        try:
+            if tray["icon"]:
+                tray["icon"].stop()
+        except Exception:
+            pass
         root.destroy()
 
-    root.protocol("WM_DELETE_WINDOW", _quit)
+    def _show_window():
+        root.deiconify(); root.lift(); root.focus_force()
+
+    def _setup_tray():
+        try:
+            import pystray
+            from PIL import Image
+            img = Image.open(ICON)
+        except Exception:
+            return  # tray optional — `pip install "pglu-ai-assistant[tray]"`
+        menu = pystray.Menu(
+            pystray.MenuItem(f"Open {cfg.name}", lambda *_: root.after(0, _show_window), default=True),
+            pystray.MenuItem("Quit", lambda *_: root.after(0, _quit)),
+        )
+        tray["icon"] = pystray.Icon("pglu", img, f"{cfg.name} AI Assistant", menu)
+        threading.Thread(target=tray["icon"].run, daemon=True).start()
+
+    def _on_close():
+        if tray["icon"] is not None:
+            root.withdraw()      # minimise to the tray instead of quitting
+            status.set("running in the tray — click the tray icon to reopen")
+        else:
+            _quit()
+
+    _setup_tray()
+    root.protocol("WM_DELETE_WINDOW", _on_close)
 
     # greet + boot
     append("nova", f"Hi {cfg.user_name}! I'm {cfg.name}. Ask me to open apps, search the web, answer "

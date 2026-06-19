@@ -57,6 +57,13 @@ def _post(url, payload, headers, timeout=60):
         return json.loads(r.read().decode("utf-8"))
 
 
+def _open_stream(url, payload, headers, timeout=120):
+    data = json.dumps(payload).encode("utf-8")
+    h = {"Content-Type": "application/json", **headers}
+    req = urllib.request.Request(url, data=data, headers=h, method="POST")
+    return urllib.request.urlopen(req, timeout=timeout)
+
+
 class Brain:
     def __init__(self, cfg):
         self.cfg = cfg
@@ -104,6 +111,59 @@ class Brain:
         except Exception:
             return None
         return None
+
+    def stream(self, system, messages):
+        """Yield reply text chunks live. Falls back to a single chunk if unsupported."""
+        p = self.effective_provider()
+        try:
+            if p == "ollama":
+                yield from self._ollama_stream(system, messages)
+                return
+            if p in OPENAI_BASE:
+                yield from self._openai_stream(p, system, messages)
+                return
+        except Exception:
+            pass
+        out = self.reply(system, messages)   # anthropic/gemini/etc. → one shot
+        if out:
+            yield out
+
+    def _ollama_stream(self, system, messages):
+        resp = _open_stream("http://localhost:11434/api/chat", {
+            "model": self._model(),
+            "messages": [{"role": "system", "content": system}] + messages,
+            "stream": True,
+        }, {})
+        for line in resp:
+            line = line.decode("utf-8").strip() if isinstance(line, bytes) else line.strip()
+            if not line:
+                continue
+            d = json.loads(line)
+            c = (d.get("message") or {}).get("content", "")
+            if c:
+                yield c
+            if d.get("done"):
+                break
+
+    def _openai_stream(self, provider, system, messages):
+        resp = _open_stream(f"{OPENAI_BASE[provider]}/chat/completions", {
+            "model": self._model(),
+            "messages": [{"role": "system", "content": system}] + messages,
+            "temperature": 0.7, "stream": True,
+        }, {"Authorization": f"Bearer {self.key}"})
+        for raw in resp:
+            line = raw.decode("utf-8").strip() if isinstance(raw, bytes) else raw.strip()
+            if not line.startswith("data:"):
+                continue
+            data = line[5:].strip()
+            if data == "[DONE]":
+                break
+            try:
+                delta = json.loads(data)["choices"][0]["delta"].get("content", "")
+                if delta:
+                    yield delta
+            except Exception:
+                continue
 
     # ---- providers ----
     def _ollama(self, system, messages):

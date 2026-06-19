@@ -28,9 +28,10 @@ mic = ["SpeechRecognition>=3.10", "sounddevice>=0.4.6", "numpy>=1.24"]  # mic in
 system = ["psutil>=5.9"]                                         # battery / CPU / RAM
 wake = ["pynput>=1.7"]                                           # global-hotkey wake
 clap = ["sounddevice>=0.4.6", "numpy>=1.24"]                     # double-clap wake
+tray = ["pystray>=0.19", "pillow>=10"]                           # system-tray icon
 # The full hands-free experience — installs cleanly on every platform, no compiler:
-full = ["SpeechRecognition>=3.10", "pyttsx3>=2.90", "psutil>=5.9", "pynput>=1.7", "sounddevice>=0.4.6", "numpy>=1.24"]
-everything = ["SpeechRecognition>=3.10", "pyttsx3>=2.90", "psutil>=5.9", "pynput>=1.7", "sounddevice>=0.4.6", "numpy>=1.24"]
+full = ["SpeechRecognition>=3.10", "pyttsx3>=2.90", "psutil>=5.9", "pynput>=1.7", "sounddevice>=0.4.6", "numpy>=1.24", "pystray>=0.19", "pillow>=10"]
+everything = ["SpeechRecognition>=3.10", "pyttsx3>=2.90", "psutil>=5.9", "pynput>=1.7", "sounddevice>=0.4.6", "numpy>=1.24", "pystray>=0.19", "pillow>=10"]
 dev = ["pytest", "ruff", "pillow"]
 
 [project.scripts]

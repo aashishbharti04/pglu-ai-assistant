@@ -34,13 +34,13 @@ class Assistant:
         except Exception:
             return False
 
-    def respond(self, text):
+    def tool_reply(self, text):
+        """Answer from local skills/tools only (no LLM). Returns text, or None if unmatched."""
         text = (text or "").strip()
         if not text:
             return ""
         if text.lower() in ("help", "commands", "menu", "skills"):
             return self.help()
-        # 1) tools: skills that DO something or give precise local facts
         for rx, handler, _sk in self.intents:
             m = rx.search(text)
             if not m:
@@ -51,26 +51,52 @@ class Assistant:
                 return f"Sorry, that failed: {e}"
             if reply is not None:   # None = "not mine" (or handed to the brain), keep trying
                 return reply
-        # 2) conversation: the LLM brain answers in-character
-        if self.brain_available:
+        return None
+
+    def respond(self, text):
+        text = (text or "").strip()
+        if not text:
+            return ""
+        reply = self.tool_reply(text)
+        if reply is not None:
+            return reply
+        if self.brain_available:           # conversation → LLM, in character
             out = self._chat(text)
             if out:
                 return out
-        # 3) offline fallback
         return (f"I'm not sure how to help with that. Say 'help' to see what I can do, "
                 f"or 'search {text}' to look it up. (Tip: run `pglu setup` to give me an AI brain "
                 "so I can really chat.)")
 
+    def _remember(self, text, out):
+        self.history.append({"role": "user", "content": text})
+        self.history.append({"role": "assistant", "content": out})
+        self.history = self.history[-12:]
+
     def _chat(self, text):
         from .persona import build_system_prompt
-        system = build_system_prompt(self.config)
         msgs = self.history[-8:] + [{"role": "user", "content": text}]
-        out = self.brain.reply(system, msgs)
+        out = self.brain.reply(build_system_prompt(self.config), msgs)
         if out:
-            self.history.append({"role": "user", "content": text})
-            self.history.append({"role": "assistant", "content": out})
-            self.history = self.history[-12:]
+            self._remember(text, out)
         return out
+
+    def stream_chat(self, text, on_delta):
+        """Stream an in-character reply; calls on_delta(chunk) live. Returns the full text."""
+        from .persona import build_system_prompt
+        msgs = self.history[-8:] + [{"role": "user", "content": text}]
+        acc = []
+        for chunk in self.brain.stream(build_system_prompt(self.config), msgs):
+            if chunk:
+                acc.append(chunk)
+                try:
+                    on_delta(chunk)
+                except Exception:
+                    pass
+        full = "".join(acc).strip()
+        if full:
+            self._remember(text, full)
+        return full
 
     def help(self):
         lines = [f"🤖 {self.config.name} can help with:"]

@@ -42,6 +42,9 @@ everything else runs locally.
 
 - 🧠 **Real conversational AI** — talk naturally (not canned replies), powered by a **local LLM (Ollama, free, private)** or **your own API key** (Claude / GPT / Gemini / Groq). Choose a **personality** and set the AI's name + who you are
 - 🎭 **Personalities** — Jarvis, Friendly, Professional, Funny, Savage, Loving, Motivational, Zen — or write your own custom style
+- 💬 **Streaming replies** — answers type out live, word by word, as the model generates them
+- 🗔 **System tray** — closing the window minimises Pglu to the tray; click the tray icon (or right-click → Open) to bring it back, so it keeps listening for wake triggers
+- 🚀 **Auto-start on login** — `pglu autostart` opens it (minimized) every boot; no terminal needed
 - 🧩 **Plugin skill architecture** — 6 skills, ~28 intents; add your own in a few lines
 - 🗣️ **Voice *and* text** — speak (SpeechRecognition) and hear replies (pyttsx3), or just type
 - 🖥️ **Real PC control** — launch apps (Notepad, Calculator, Settings, Task Manager, VS Code…), open sites
