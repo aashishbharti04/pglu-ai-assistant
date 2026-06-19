@@ -49,6 +49,9 @@ class Web(Skill):
         elif "." in raw:
             url = raw if raw.startswith("http") else "https://" + raw
         else:
-            return None  # not a known site → let Apps/other skills try
+            # Apps already tried to launch it as a program; if we're here it's neither a
+            # known app nor a website — answer honestly instead of letting the AI fake it.
+            return (f"I couldn't find an app or website called “{raw}”. "
+                    f"Try the exact name, or say “search {raw}”.")
         webbrowser.open(url)
         return f"Opening {raw}."

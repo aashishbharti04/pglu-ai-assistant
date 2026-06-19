@@ -30,9 +30,10 @@ def build_system_prompt(cfg) -> str:
     who = f"You are {cfg.name}, a personal AI assistant"
     who += f" for {cfg.user_name}" if cfg.user_name else ""
     about = f" Here is who they are: {cfg.user_about}." if cfg.user_about else ""
-    caps = (" You run on the user's own computer and can take REAL actions — opening apps, reporting "
-            "system info (battery/CPU/RAM/disk), setting timers, taking notes and searching the web — "
-            "which the app carries out for you, so never claim you can't do those. Keep replies fairly "
-            "short, natural and conversational, and always stay in character.")
+    caps = (" The app itself performs real actions — opening apps, system info (battery/CPU/RAM/disk), "
+            "timers, notes, web searches — and handles those BEFORE you ever see them. So you mainly "
+            "converse. Never pretend you performed an action or claim something happened unless you "
+            "actually know it did — if you're unsure or can't do it, say so honestly. Keep replies "
+            "short, natural and in character.")
     today = datetime.datetime.now().strftime("%A, %d %B %Y, %I:%M %p")
     return f"{who}.{about} {style}{caps} For context, right now it is {today}."
