@@ -182,6 +182,7 @@ for a user app.)
 
 ```bash
 pglu                       # interactive text mode
+pglu update                # get the latest version (git pull + reinstall), then restart
 pglu setup                 # set AI name, persona & brain provider
 pglu start                 # open the window DETACHED — safe to close the terminal after
 pglu gui                   # open the window (stays tied to this terminal)

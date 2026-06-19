@@ -49,6 +49,11 @@ def main(argv=None):
         _setup(cfg)
         return
 
+    # update to the latest version (git pull + reinstall)
+    if one == "update" and len(args.command) == 1:
+        _update()
+        return
+
     # launch the GUI detached so it survives closing the terminal
     if one in ("start", "background", "bg") and len(args.command) <= 2:
         from .desktop import launch_detached
@@ -108,6 +113,34 @@ def main(argv=None):
         return
 
     _interactive(assistant, voice, cfg)
+
+
+def _repo_root():
+    import os
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # parent of pglu/
+    return root if os.path.isdir(os.path.join(root, ".git")) else None
+
+
+def _update():
+    import subprocess
+    import sys
+    repo = _repo_root()
+    if not repo:
+        print("Couldn't locate the git clone. Update manually:\n"
+              '    cd <your pglu-ai-assistant folder>\n    git pull\n    pip install -e ".[full]"')
+        return
+    print("⤵  Pulling the latest version…")
+    r = subprocess.run(["git", "-C", repo, "pull"], capture_output=True, text=True)
+    print((r.stdout or "").strip() or (r.stderr or "").strip())
+    if r.returncode != 0:
+        print("✗ git pull failed (resolve the above and retry). Is git installed?")
+        return
+    print("⤵  Reinstalling…")
+    r2 = subprocess.run([sys.executable, "-m", "pip", "install", "-e", f"{repo}[full]", "--quiet"])
+    if r2.returncode == 0:
+        print("✓ Updated! Restart Rani: close the window/tray, then run `pglu start` (or click the icon).")
+    else:
+        print('Update pulled, but reinstall hit an issue — try:  pip install -e ".[full]"')
 
 
 def _setup(cfg):
